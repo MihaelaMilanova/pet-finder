@@ -1,0 +1,86 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+enum PetStatus {
+  LOST
+  FOUND
+  HOME
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  name      String
+  email     String   @unique
+  password  String
+  role      Role     @default(USER)
+  createdAt DateTime @default(now())
+  pets      Pet[]
+  comments  Comment[]
+  sentMessages     Message[] @relation("SentMessages")
+receivedMessages Message[] @relation("ReceivedMessages")
+}
+
+model AnimalType {
+  id     Int     @id @default(autoincrement())
+  name   String  @unique
+  breeds Breed[]
+  pets   Pet[]
+}
+
+model Breed {
+  id           Int        @id @default(autoincrement())
+  name         String
+  animalType   AnimalType @relation(fields: [animalTypeId], references: [id])
+  animalTypeId Int
+  pets         Pet[]
+}
+
+model Pet {
+  id           Int        @id @default(autoincrement())
+  title        String
+  description  String
+  status       PetStatus
+  color        String
+  age          Int?
+  imageUrl     String?
+  location     String
+  createdAt    DateTime   @default(now())
+  user         User       @relation(fields: [userId], references: [id])
+  userId       Int
+  animalType   AnimalType @relation(fields: [animalTypeId], references: [id])
+  animalTypeId Int
+  breed        Breed?     @relation(fields: [breedId], references: [id])
+  breedId      Int?
+  comments     Comment[]
+}
+
+model Comment {
+  id        Int      @id @default(autoincrement())
+  content   String
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id])
+  userId    Int
+  pet       Pet      @relation(fields: [petId], references: [id])
+  petId     Int
+}
+
+model Message {
+  id         Int      @id @default(autoincrement())
+  content    String
+  createdAt  DateTime @default(now())
+  read       Boolean  @default(false)
+  sender     User     @relation("SentMessages", fields: [senderId], references: [id])
+  senderId   Int
+  receiver   User     @relation("ReceivedMessages", fields: [receiverId], references: [id])
+  receiverId Int
+}
