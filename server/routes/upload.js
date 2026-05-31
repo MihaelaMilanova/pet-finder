@@ -30,7 +30,8 @@ router.post('/', authMiddleware, upload.single('image'), async (req, res) => {
 
     res.json({ url: result.secure_url })
   } catch (err) {
-    res.status(500).json({ error: 'Грешка при качване' })
+    console.error('Upload error:', err)
+  res.status(500).json({ error: err.message })
   }
 })
 
