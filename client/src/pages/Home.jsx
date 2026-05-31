@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import api from '../api/axios'
+import HomeMap from '../components/HomeMap'
 
 export default function Home() {
   const [stats, setStats] = useState({ total: 0, lost: 0, found: 0 })
@@ -84,6 +85,13 @@ export default function Home() {
           <p className="text-gray-500 mt-1">Намерени</p>
         </div>
       </div>
+
+  
+
+
+<HomeMap />
+
+
 
       {/* Последни обяви */}
       {recentPets.length > 0 && (

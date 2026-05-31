@@ -8,6 +8,11 @@ export default function Register() {
   const [error, setError] = useState('')
   const { login } = useAuth()
   const navigate = useNavigate()
+  const [passwordStrength, setPasswordStrength] = useState({
+  length: false,
+  uppercase: false,
+  number: false,
+})
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -41,14 +46,37 @@ export default function Register() {
           onChange={(e) => setForm({ ...form, email: e.target.value })}
           required
         />
-        <input
-          type="password"
-          placeholder="Парола"
-          className="border border-stone-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-amber-600"
-          value={form.password}
-          onChange={(e) => setForm({ ...form, password: e.target.value })}
-          required
-        />
+        <div>
+  <input
+    type="password"
+    placeholder="Парола"
+    className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-orange-400"
+    value={form.password}
+    onChange={(e) => {
+      const val = e.target.value
+      setForm({ ...form, password: val })
+      setPasswordStrength({
+        length: val.length >= 8,
+        uppercase: /[A-Z]/.test(val),
+        number: /[0-9]/.test(val),
+      })
+    }}
+    required
+  />
+  {form.password && (
+    <div className="mt-2 flex flex-col gap-1 text-xs">
+      <span className={passwordStrength.length ? 'text-green-500' : 'text-red-400'}>
+        {passwordStrength.length ? '✓' : '✗'} Поне 8 знака
+      </span>
+      <span className={passwordStrength.uppercase ? 'text-green-500' : 'text-red-400'}>
+        {passwordStrength.uppercase ? '✓' : '✗'} Поне една главна буква
+      </span>
+      <span className={passwordStrength.number ? 'text-green-500' : 'text-red-400'}>
+        {passwordStrength.number ? '✓' : '✗'} Поне една цифра
+      </span>
+    </div>
+  )}
+</div>
         <button
           type="submit"
           className="bg-amber-700 text-white py-2 rounded-lg hover:bg-amber-800 transition font-semibold"
